@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os 
+
 from pathlib import Path
 from my_settings import DATABASES,SECRET_KEY
 
@@ -29,6 +31,8 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
+
+AUTH_USER_MODEL = "shortener.Users"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,7 +61,7 @@ ROOT_URLCONF = 'shrinkrs.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
