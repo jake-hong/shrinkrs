@@ -14,6 +14,3 @@ def index(request):
     return render(request, "base.html",{"welcome_msg":f"hello{user}"}
     )
 
-def redirect_test(request):
-    print("GO redirect")
-    return redirect("index")
