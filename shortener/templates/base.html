@@ -5,6 +5,13 @@
     <title>shrinkrs</title>
 </head>
 <body>
-{{ welcome_msg }}    
+    {{ welcome_msg }} <br>
+    {{user.email}} <br>
+    {% for i in params %}
+        {{i}} <br>    
+    {% endfor %}
+    {% if user == "abc" %}
+    {% endif%}
+
 </body>
 </html>
