@@ -15,10 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from shortener.views import index, get_user
+from django.conf import settings
+from django.conf.urls import include 
+from shortener.views import index, get_user,register
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", index, name="index"),
     path("get_user/<int:user_id>",get_user),
+    path("register",register,name="register"),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns=[
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

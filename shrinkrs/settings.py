@@ -42,7 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'shortener'
+    'shortener',
+    'debug_toolbar' # Django Debug Toolbar
+]
+
+INTERNAL_IPS= [
+    '127.0.0.1',
+    # Django Debug Toolbar
 ]
 
 MIDDLEWARE = [
@@ -53,8 +59,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    # 'corsheaders.middleware.CorsMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware' # Django Devug Toolbar
 ]
+
+if DEBUG is False:
+    del MIDDLEWARE[0]
 
 ROOT_URLCONF = 'shrinkrs.urls'
 
@@ -105,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'UTC'
 
