@@ -1,26 +1,25 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render 
+from django.shortcuts import redirect, render 
 from shortener.models import Users
 from shortener.forms import RegisterForm
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login, logout
 
 # Create your views here.
 def index(request):
-    print("hello")
     user = Users.objects.filter(id=request.user.id).first()
     email = user.email if user else "anonyumous user!"
-    print(email)
     print("Logged in?",  request.user.is_authenticated)
     # print(request.user.pay_plan.name)
     
     if request.user.is_authenticated is False:
         email = "anonymous user!"
         print(email)
-    return render(request, "base.html",{"welcome_msg":f"hello{user}"}
-    )
+    return render(request, "base.html",{"welcome_msg":f"hello"})
 
-@csrf_exempt
+
+@csrf_exempt # 사이트 위변조 방지 
 def get_user(request,user_id):
     print(user_id)
     
@@ -42,13 +41,33 @@ def register(request):
         msg = "unvalid data"
 
         if form.is_valid():
-            user = form.save()
+            form.save()
             username = form.cleaned_data.get("username")
             raw_pw = form.cleaned_data.get("password1")
             user = authenticate(username=username, password=raw_pw)
             login(request,user,backend='django.contrib.auth.backends.ModelBackend')
-            msg="Login Success"
+            msg="로그인 성공"
         return render(request, "register.html", {"form":form,"msg":msg})
     else:
         form = RegisterForm()
         return render(request,"register.html",{"form":form})  
+
+def login_view(request):
+    if request.method =="POST":
+        form = AuthenticationForm(request, request.POST)
+        msg = "로그인 정보가 잘 못되었습니다. 가입하지 않으셨다면 회원 가입을 진행해주세요."
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            raw_pw = form.cleaned_data.get("password")
+            user = authenticate(username=username,password=raw_pw)
+            if user is not None:
+                msg = "로그인 성공"
+                login(request,user)
+        return render(request, "login.html", {"form":form, "msg":msg})
+    else:
+        form = AuthenticationForm()         
+        return render(request, "login.html",{"form":form}) 
+
+def logout_view(request):
+    logout(request)
+    return redirect("index")
