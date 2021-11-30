@@ -5,9 +5,12 @@ from django.shortcuts import redirect, render
 from shortener.models import Users
 from shortener.forms import RegisterForm
 from django.contrib.auth import authenticate,login, logout
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
+    print(request.user.pay_plan.name)
     user = Users.objects.filter(id=request.user.id).first()
     email = user.email if user else "anonyumous user!"
     print("Logged in?",  request.user.is_authenticated)
@@ -55,7 +58,8 @@ def register(request):
 def login_view(request):
     if request.method =="POST":
         form = AuthenticationForm(request, request.POST)
-        msg = "로그인 정보가 잘 못되었습니다. 가입하지 않으셨다면 회원 가입을 진행해주세요."
+        msg = "로그인 정보가 잘못 되었습니다. 가입하지 않으셨다면 회원 가입을 진행해주세요."
+        print(form.is_valid())
         if form.is_valid():
             username = form.cleaned_data.get("username")
             raw_pw = form.cleaned_data.get("password")
@@ -71,3 +75,11 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("index")
+
+@login_required
+def list_view(request):
+    page= int(request.GET.get("p",1))
+    users = Users.objects.all().order_by("id")
+    paginator = Paginator(users,10)
+    users = paginator.get_page(page)
+    return render(request,"board.html",{"users":users})

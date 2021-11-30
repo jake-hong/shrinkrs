@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'shortener.apps.ShortenerConfig',
     'corsheaders',
-    'shortener',
-    'debug_toolbar' # Django Debug Toolbar
+    # 'shortener',
+    'debug_toolbar', # Django Debug Toolbar
+    'django_seed',
 ]
 
 INTERNAL_IPS= [
@@ -59,8 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware'
-    'debug_toolbar.middleware.DebugToolbarMiddleware' # Django Devug Toolbar
+    'corsheaders.middleware.CorsMiddleware'
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware' # Django Devug Toolbar
 ]
 
 if DEBUG is False:
@@ -78,8 +80,11 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages',     
             ],
+            'libraries':{
+            'custom_tags': 'shortener.templatetags.custom_tags',
+            }
         },
     },
 ]
@@ -161,3 +166,5 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with'
 )
+
+APPEND_SLASH     = False
