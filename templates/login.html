@@ -1,14 +1,20 @@
 {% load static %}
 <!--
+
 =========================================================
 * Impact Design System - v1.0.0
 =========================================================
+
 * Product Page: https://www.creative-tim.com/product/impact-design-system
 * Copyright 2010 Creative Tim (https://www.creative-tim.com)
 * Licensed under MIT (https://github.com/creativetimofficial/impact-design-system/blob/master/LICENSE.md)
+
 * Coded by Creative Tim
+
 =========================================================
+
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
 -->
 <!DOCTYPE html>
 <html>
@@ -80,8 +86,8 @@
               {% if msg %}
               <p class="text-center text-sm text-danger">{{ msg }}</p>
               {% endif %}
-              {% if is_ok %}
-              <p class="text-center text-sm text-success">로그인 성공({{ user.username }})</p>
+              {% if is_ok or user.is_authenticated %}
+              <p class="text-center text-sm text-success">로그인 성공({{ user.username }}) <a class="text-primary" href="{% url 'logout' %}">로그아웃</a></p>
               {% endif %}
               <form method="post">
                 {% csrf_token %}
@@ -90,7 +96,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-user-run"></i></span>
                     </div>
-                    {{ form.username }}
+                    {{ form.email }}
                   </div>
                 </div>
                 <div class="form-group">
@@ -102,8 +108,8 @@
                   </div>
                 </div>
                 <div class="custom-control custom-control-alternative custom-checkbox">
-                  <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
-                  <label class="custom-control-label" for=" customCheckLogin">
+                  {{ form.remember_me }}
+                  <label class="custom-control-label" for="_loginRememberMe">
                     <span>로그인 유지하기</span>
                   </label>
                 </div>
