@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
-    print(request.user.pay_plan.name)
+    # print(request.user.pay_plan.name)
     user = Users.objects.filter(id=request.user.id).first()
     email = user.email if user else "anonyumous user!"
     print("Logged in?",  request.user.is_authenticated)
@@ -76,7 +76,7 @@ def logout_view(request):
     logout(request)
     return redirect("index")
 
-@login_required
+# @login_required
 def list_view(request):
     page= int(request.GET.get("p",1))
     users = Users.objects.all().order_by("id")
