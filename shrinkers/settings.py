@@ -25,7 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ENV = os.environ.get("DJANGO_ENV", "dev")
+
+if ENV == "dev":
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -42,10 +47,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "shortener.apps.ShortenerConfig",
-    "corsheaders",
-    "debug_toolbar",  # Django Debug Toolbar
-    "django_seed",
 ]
+
+# if DEBUG:
+#     INSTALLED_APPS += [
+#         "debug_toolbar",
+#         "django_seed",
+#     ]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -62,12 +70,12 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware"
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware' # Django Devug Toolbar
 ]
 
-if DEBUG is False:
-    del MIDDLEWARE[0]
+# if DEBUG:
+#     INSTALLED_APPS += [
+#         "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
+#     ]
 
 ROOT_URLCONF = "shrinkers.urls"
 
@@ -143,22 +151,5 @@ STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SECRET_KEY = SECRET_KEY
-
-##CORS
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = ("DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT")
-
-CORS_ALLOW_HEADERS = (
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-)
 
 APPEND_SLASH = False
