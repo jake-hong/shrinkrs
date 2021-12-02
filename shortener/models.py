@@ -1,26 +1,57 @@
 import string
 import random
+from typing import AbstractSet
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User as U
 
-# from shortener.models import AbstractUser
+
+class TimeStampedModel(models.Model):
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
 
 
-class PayPlan(models.Model):
+class PayPlan(TimeStampedModel):
     name = models.CharField(max_length=20)
     price = models.IntegerField()
-    updated_at = models.DateTimeField(auto_now=True)
-    create_at = models.DateTimeField(auto_now_add=True)
 
 
-class Users(AbstractUser):
-    full_name = models.CharField(max_length=100, null=True)
+class Organization(TimeStampedModel):
+    class Industiries(models.TextChoices):
+        PERSONAL = "personal"
+        RETAIL = "retail"
+        MANUFACTURING = "manufacturing"
+        IT = "it"
+        OTHERS = "others"
+
+    name = models.CharField(max_length=50)
+    industry = models.CharField(max_length=15, choices=Industiries.choices, default=Industiries.OTHERS)
     pay_plan = models.ForeignKey(PayPlan, on_delete=models.DO_NOTHING, null=True)
 
 
-class ShortenedUrls(models.Model):
+class Users(models.Model):
+    user = models.OneToOneField(U, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100, null=True)
+    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
+
+
+class EmailVerification(TimeStampedModel):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    key = models.CharField(max_length=100, null=True)
+    verified = models.BooleanField(default=False)
+
+
+class Categories(TimeStampedModel):
+    name = models.CharField(max_length=100)
+    organizaion = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
+    creator = models.ForeignKey(Users, on_delete=models.CASCADE)
+
+
+class ShortenedUrls(TimeStampedModel):
     class UrlCreatedVia(models.TextChoices):
         WEBSITE = "web"
         TELEGRAM = "telegram"
@@ -30,9 +61,10 @@ class ShortenedUrls(models.Model):
         return ("".join([random.choice(str_pool) for _ in range(6)])).lower()
 
     nick_name = models.CharField(max_length=100)
-    created_by = models.ForeignKey(Users, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, null=True)
+    prefix = models.CharField(max_length=50)
+    creator = models.ForeignKey(Users, on_delete=models.CASCADE)
     target_url = models.CharField(max_length=2000)
     shortened_url = models.CharField(max_length=6, default=rand_string)
     created_via = models.CharField(max_length=8, choices=UrlCreatedVia.choices, default=UrlCreatedVia.WEBSITE)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    expired_at = models.DateTimeField(null=True)
