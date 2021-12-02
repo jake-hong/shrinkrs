@@ -1,3 +1,6 @@
+from shortener.utils import url_count_changer
+from urllib.parse import urlparse
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms.widgets import Widget
@@ -49,7 +52,13 @@ class UrlCreateForm(forms.ModelForm):
         instance.created_by_id = request.user.id
         instance.target_url = instance.target_url.strip()
         if commit:
-            instance.save()
+            try:
+                instance.save()
+            except Exception as e:
+                print(e)
+            else:
+                url_count_changer(request, True)
+
         return instance
 
     def update_form(self, request, url_id):
