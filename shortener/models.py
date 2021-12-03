@@ -1,9 +1,7 @@
 import string
 import random
-from typing import AbstractSet
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User as U
 
 
@@ -36,6 +34,7 @@ class Organization(TimeStampedModel):
 class Users(models.Model):
     user = models.OneToOneField(U, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100, null=True)
+    url_count = models.IntegerField(default=0)
     organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
 
 
@@ -60,6 +59,10 @@ class ShortenedUrls(TimeStampedModel):
         str_pool = string.digits + string.ascii_letters
         return ("".join([random.choice(str_pool) for _ in range(6)])).lower()
 
+    def rand_letter():
+        str_pool = string.ascii_letters
+        return random.choice(str_pool).lower()
+
     nick_name = models.CharField(max_length=100)
     category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, null=True)
     prefix = models.CharField(max_length=50)
@@ -68,3 +71,13 @@ class ShortenedUrls(TimeStampedModel):
     shortened_url = models.CharField(max_length=6, default=rand_string)
     created_via = models.CharField(max_length=8, choices=UrlCreatedVia.choices, default=UrlCreatedVia.WEBSITE)
     expired_at = models.DateTimeField(null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(
+                fields=[
+                    "prefix",
+                    "shortened_url",
+                ]
+            ),
+        ]

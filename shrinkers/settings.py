@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "shortener.apps.ShortenerConfig",
 ]
 
+
+REST_FRAMEWORK = {"DEFAULT_PAGINATION_CLASS"}
 # if DEBUG:
 #     INSTALLED_APPS += [
 #         "debug_toolbar",
